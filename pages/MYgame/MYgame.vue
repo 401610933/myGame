@@ -103,6 +103,7 @@
 			},
 			TimeStop: function() {
 				clearInterval(this.StopId)  //停止计时
+				clearInterval(this.mystopId);
 			},
 			MyToOther:function(){  //my to other gong ji
 				this.mystopId = setInterval(() => {
@@ -115,10 +116,9 @@
 			baoji(thisOdds,att,baojiAtt){   // thisOdds:自身暴击率 --- att:伤害值 ---- baojiAtt:暴击伤害
 				let odds = parseInt(Math.random()*(100-0+1)+0,10);		//0-100 随机抽
 				if(odds<=thisOdds){
-					return 50
-				}else{
-					return att
+					att = parseInt(att*(baojiAtt/100))
 				}
+				return att
 			}
 		},
 		created() {
