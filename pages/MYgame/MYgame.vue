@@ -32,10 +32,10 @@
 			</view>
 			<view class="flex">
 				<view class="flex-treble padding-lr-xs">闪避:{{myConfig.dodge}}%</view>
-				<view class="flex-treble">免疫:{{myConfig.immune}}</view>
+				<view class="flex-treble">格挡:{{myConfig.immune}}</view>
 				<view class="flex-sub padding-lr-xs"></view>
 				<view class="flex-treble padding-lr-xs">闪避:{{otherConfig.dodge}}%</view>
-				<view class="flex-treble">免疫:{{otherConfig.immune}}</view>
+				<view class="flex-treble">格挡:{{otherConfig.immune}}</view>
 			</view>
 			<view class="flex">
 				<view class="flex-treble padding-lr-xs">攻速:{{myConfig.speed}}</view>
@@ -73,11 +73,11 @@
 				},
 				otherConfig: {
 					life: 800, //sheng ming
-					att: 10, //gong ji
+					att: 5, //gong ji
 					baoji: 0, //bao ji
 					dodge: 0, //shan bi
 					speed: 100, //su du
-					def: 0, //fang yu
+					def: 50, //fang yu
 					poison: 0, //du
 					immune: 0, //mian yi  抵挡一次
 					baojiAtt: 150, //bao ji shang hai
@@ -87,8 +87,8 @@
 				StopId: '' ,//stop time
 				MYlifeP:100,
 				otherlifeP:100,
-				mylifeResidue:1000,
-				otherlifeResidue:800,
+				mylifeResidue:1000, // my 战斗 血量
+				otherlifeResidue:800, // other 战斗 血量
 			}
 		},
 		methods: {
@@ -108,18 +108,25 @@
 			MyToOther:function(){  //my to other gong ji
 				this.mystopId = setInterval(() => {
 					let hurt = this.myConfig.att;     // 计算伤害
-					hurt=this.baoji(this.myConfig.baoji,this.myConfig.att,this.myConfig.baojiAtt);  //得到 爆伤
+					hurt = this.def(hurt,this.otherConfig.def)
+					hurt = this.baoji(this.myConfig.baoji,hurt,this.myConfig.baojiAtt);  //得到 爆伤
 					this.otherlifeResidue -= hurt;  // att 
 					this.otherlifeP = (this.otherlifeResidue/this.otherConfig.life) * 100;  //计算 剩余 %
 				}, 1000-this.myConfig.speed)
 			},
-			baoji(thisOdds,att,baojiAtt){   // thisOdds:自身暴击率 --- att:伤害值 ---- baojiAtt:暴击伤害
+			baoji:function(thisOdds,att,baojiAtt){   // thisOdds:自身暴击率 --- att:伤害值 ---- baojiAtt:暴击伤害
 				let odds = parseInt(Math.random()*(100-0+1)+0,10);		//0-100 随机抽
 				if(odds<=thisOdds){
 					att = parseInt(att*(baojiAtt/100))
 				}
 				return att
+			},
+			def:function(att,def){		//att 当前伤害  ---- def 人物防御
+				att -= def
+				att<0 ? att=1 : ''
+				return att
 			}
+
 		},
 		created() {
 			this.skill = config.allSkill() //zai ru ji neng
